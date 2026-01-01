@@ -527,7 +527,20 @@ ExtrusionEntityCollection make_brim(const Print &print, PrintTryCancel try_cance
     ConstPrintObjectPtrs    top_level_objects_with_brim = get_top_level_objects_with_brim(print, bottom_layers_expolygons);
     Polygons                islands                     = top_level_outer_brim_islands(top_level_objects_with_brim, scaled_resolution);
     ExPolygons              islands_area_ex             = top_level_outer_brim_area(print, top_level_objects_with_brim, bottom_layers_expolygons, float(flow.scaled_spacing()));
-    islands_area                                        = to_polygons(islands_area_ex);
+
+    const bool brim_clip = std::any_of(print.objects().begin(), print.objects().end(), [](const PrintObject *object) {
+        return object->has_brim() && object->config().brim_clip.value;
+    });
+
+    if (brim_clip && !print.config().bed_shape.values.empty()) {
+        Polygon   bed_poly    = Polygon::new_scale(print.config().bed_shape.values);
+        ExPolygons bed_ex     = { ExPolygon(std::move(bed_poly)) };
+        ExPolygons bed_ex_clip = offset_ex(bed_ex, -float(SCALED_EPSILON), ClipperLib::jtSquare);
+        if (!bed_ex_clip.empty())
+            islands_area_ex = intersection_ex(islands_area_ex, bed_ex_clip);
+    }
+
+    islands_area = to_polygons(islands_area_ex);
 
     Polygons        loops;
     size_t          num_loops = size_t(floor(max_brim_width(print.objects()) / flow.spacing()));

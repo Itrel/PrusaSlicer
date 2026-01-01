@@ -714,7 +714,8 @@ bool PrintObject::invalidate_state_by_config_options(
     std::vector<PrintObjectStep> steps;
     bool invalidated = false;
     for (const t_config_option_key &opt_key : opt_keys) {
-        if (   opt_key == "brim_width"
+        if (   opt_key == "brim_clip"
+            || opt_key == "brim_width"
             || opt_key == "brim_separation"
             || opt_key == "brim_type") {
             steps.emplace_back(posSupportSpotsSearch);

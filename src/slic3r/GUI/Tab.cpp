@@ -1547,6 +1547,7 @@ void TabPrint::build()
         optgroup->append_single_option_line("brim_type", category_path + "brim");
         optgroup->append_single_option_line("brim_width", category_path + "brim");
         optgroup->append_single_option_line("brim_separation", category_path + "brim");
+        optgroup->append_single_option_line("brim_clip", category_path + "brim");
 
     page = add_options_page(L("Support material"), "support");
         category_path = "support-material_1698#";

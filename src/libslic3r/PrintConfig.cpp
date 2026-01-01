@@ -863,6 +863,13 @@ void PrintConfigDef::init_fff_params()
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat(0));
 
+    def = this->add("brim_clip", coBool);
+    def->label = L("Brim clip");
+    def->category = L("Skirt and brim");
+    def->tooltip = L("Clip the brim if it extends outside the printable area.");
+    def->mode = comExpert;
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("brim_type", coEnum);
     def->label = L("Brim type");
     def->category = L("Skirt and brim");
